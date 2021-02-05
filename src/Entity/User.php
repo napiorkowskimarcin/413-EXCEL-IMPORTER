@@ -43,6 +43,7 @@ class User
      */
     private $department_id;
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,4 +108,8 @@ class User
 
         return $this;
     }
+    public function __toString(){
+        return $this->getId();
+    }
+
 }

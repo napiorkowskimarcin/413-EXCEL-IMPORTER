@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Excel index{% endblock %}
+
+{% block body %}
+    <h1>Excel index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for excel in excels %}
+            <tr>
+                <td>{{ excel.id }}</td>
+                <td>{{ excel.name }}</td>
+                <td>
+                    <a href="{{ path('excel_show', {'id': excel.id}) }}">show</a>
+                    <a href="{{ path('excel_edit', {'id': excel.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('excel_new') }}">Create new</a>
+{% endblock %}
