@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Department;
-use App\Entity\Position;
 use App\Entity\User;
 use App\Entity\Excel;
 use App\Form\ExcelType;
@@ -41,7 +39,6 @@ class ExcelController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $excelFile */
             //step2 - save file for reading
             $excelFile = $form->get('excel')->getData();
             if ($excelFile) {
@@ -83,7 +80,12 @@ class ExcelController extends AbstractController
                         $entityManager->flush();      
                     } else {
                      //update old
-                        dump($user_existant) ;
+                        $user = $user_existant;
+                        $user->setFirstName($firstname);     
+                        $user->setLastname($lastname);     
+                        $user->setPositionId($positionRepository->findOneBy(array('name' => $Row['D'])));     
+                        $user->setDepartmentId($departmentRepository->findOneBy(array('name' => $Row['E'])));
+                        $entityManager->flush();
                     }}
                 }
                 
