@@ -25,3 +25,8 @@
 - create a crud for each entity
 - create entity excel + create crud
 - create upload file system + use phpspreadsheet
+- go to http://localhost:8000/
+- use navigation to handle your actions
+- you can access creating/updating/deleting deparments and positions putting urls by hand (it may be allowed to admin in the future)
+- http://localhost:8000/position/ and
+- http://localhost:8000/department/
