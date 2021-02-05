@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ExcelType extends AbstractType
 {
@@ -15,8 +16,11 @@ class ExcelType extends AbstractType
     {
         $builder
             ->add('excel', FileType::class, [
-                'label' => 'Data - Excel file',
-
+                'label' => false,
+                'attr' => [
+                    'placeholder'=> 'title',
+                    'class'=> 'card-title'
+                ],
                 // unmapped means that this field is not associated to any entity property
                 'mapped' => false,
 
@@ -37,12 +41,17 @@ class ExcelType extends AbstractType
                     ])
                 ],
             ])
+             ->add('save', SubmitType::class, [
+                 'label' => 'IMPORT',
+                'attr' => ['class' => ' btn btn-primary save'],
+            ]);
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            
             'data_class' => Excel::class,
         ]);
     }
