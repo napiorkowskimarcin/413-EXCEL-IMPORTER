@@ -12,6 +12,7 @@
 
 ## start
 
+- arrange your env file - DATABASE_URL="mysql://root:@127.0.0.1:3306/excelimporter" accordingly to your situation
 - be sure that symfony is installed: https://symfony.com/download
 - clone directory
 - composer install
