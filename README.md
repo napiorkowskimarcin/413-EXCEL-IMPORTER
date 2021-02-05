@@ -2,7 +2,13 @@
 
 ## CURRENT VIEW:
 
-![](gitphotos/one.PNG)
+# In case I load first file:
+
+![](gitphotos/two.PNG)
+
+# In case I update file - it this sitation i have changed names in all of them:
+
+![](gitphotos/three.PNG)
 
 ## start
 

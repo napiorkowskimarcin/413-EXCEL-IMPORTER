@@ -4,7 +4,23 @@
 
 {% block body %}
     <h1>Create new Excel</h1>
+
+    {% for message in app.flashes('danger') %}
+    <div class="flash-notice text-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('update') %}
+    <div class="flash-notice text-info">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+    <div class="flash-notice text-success">
+        {{ message }}
+    </div>
+    {% endfor %}
     <div class="card">
     {{ include('excel/_form.html.twig') }}
-     </div>
+    </div>
 {% endblock %}

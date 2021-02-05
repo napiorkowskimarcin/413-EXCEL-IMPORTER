@@ -61,7 +61,7 @@ class ExcelController extends AbstractController
                 
                 //step 4.1 - save data
                 $entityManager = $this->getDoctrine()->getManager(); 
-                foreach ($sheetData as $Row) {
+                foreach ($sheetData as $key => $Row) {
                     if($Row['A'] && $Row['B'] && $Row['C'] ){    
                     $firstname = $Row['A']; 
                     $lastname = $Row['B'];
@@ -69,15 +69,25 @@ class ExcelController extends AbstractController
                     //check if user exists
                     $user_existant =$userRepository->findOneBy(array('idnumber' => $idnumber)); 
                     //create new one
+                    //for flash messages:
+                        $position =$positionRepository->findOneBy(array('name' => $Row['D']));
+                        if(!$position){
+                        $this->addFlash('info', "missing position for user with an ID: $idnumber !");
+                        }
+                        $department =$departmentRepository->findOneBy(array('name' => $Row['E']));
+                        if(!$department){
+                        $this->addFlash('info', "missing department for user with an ID: $idnumber !");
+                        }
                     if (!$user_existant) {
                         $user = new User(); 
                         $user->setFirstName($firstname);     
                         $user->setLastname($lastname);     
                         $user->setIdnumber($idnumber);     
-                        $user->setPositionId($positionRepository->findOneBy(array('name' => $Row['D'])));     
-                        $user->setDepartmentId($departmentRepository->findOneBy(array('name' => $Row['E'])));
+                        $user->setPositionId($position);     
+                        $user->setDepartmentId($department);
                         $entityManager->persist($user); 
-                        $entityManager->flush();      
+                        $entityManager->flush();  
+                        $this->addFlash('success', "created: $idnumber");    
                     } else {
                      //update old
                         $user = $user_existant;
@@ -86,9 +96,24 @@ class ExcelController extends AbstractController
                         $user->setPositionId($positionRepository->findOneBy(array('name' => $Row['D'])));     
                         $user->setDepartmentId($departmentRepository->findOneBy(array('name' => $Row['E'])));
                         $entityManager->flush();
+                        $this->addFlash('update', "updated: $idnumber");
                     }}
-                }
+                     else {
+                         //case row is not cosindered to create/update
+                        if(!$Row['A']){
+                            $this->addFlash('danger', "missing firstname on the row no:". $key+1);
+                        }
+                        if(!$Row['B']){
+                            $this->addFlash('danger', "missing lastname on the row no:". $key+1);
+                        }
+                        if(!$Row['C']){
+                            $this->addFlash('danger', "missing idnumber on the row no:". $key+1);
+                        }
                 
+                    
+                }}
+                
+            
             }
         }
 
