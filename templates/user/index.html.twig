@@ -12,7 +12,8 @@
                 <th>Firstname</th>
                 <th>Lastname</th>
                 <th>Idnumber</th>
-                <th>actions</th>
+                <th>Position</th>
+                <th>Depertment</th>
             </tr>
         </thead>
         <tbody>
@@ -22,10 +23,19 @@
                 <td>{{ user.firstname }}</td>
                 <td>{{ user.lastname }}</td>
                 <td>{{ user.idnumber }}</td>
-                <td>
-                    <a href="{{ path('user_show', {'id': user.id}) }}">show</a>
-                    
-                </td>
+                {#  #}
+                {% if user.getPositionId() %}
+                <td>{{ user.getPositionId() }}</td>
+                {% else %}
+                <td>NULL</td>
+                {% endif %}
+                {#  #}
+                {% if user.getDepartmentId() %}
+                <td>{{ user.getDepartmentId() }}</td>
+                {% else %}
+                <td>NULL</td>
+                {% endif %}
+                {#  #}
             </tr>
         {% else %}
             <tr>
