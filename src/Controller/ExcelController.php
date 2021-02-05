@@ -7,6 +7,9 @@ use App\Entity\Position;
 use App\Entity\User;
 use App\Entity\Excel;
 use App\Form\ExcelType;
+use App\Repository\DepartmentRepository;
+use App\Repository\UserRepository;
+use App\Repository\PositionRepository;
 use App\Repository\ExcelRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,8 +32,9 @@ class ExcelController extends AbstractController
     }
     // load data
     #[Route('/new', name: 'excel_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SluggerInterface $slugger): Response
+    public function new(DepartmentRepository $departmentRepository,PositionRepository $positionRepository,UserRepository $userRepository, Request $request, SluggerInterface $slugger): Response
     {
+        //load positions
         //step1 - prepare
         $excel = new Excel();
         $form = $this->createForm(ExcelType::class, $excel);
@@ -39,7 +43,7 @@ class ExcelController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $excelFile */
             //step2 - save file for reading
-           $excelFile = $form->get('excel')->getData();
+            $excelFile = $form->get('excel')->getData();
             if ($excelFile) {
                 $originalFilename = pathinfo($excelFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
@@ -55,29 +59,32 @@ class ExcelController extends AbstractController
                 $excel->setName($newFilename);
                 //step3 - load data
                 $spreadsheet = IOFactory::load($this->getParameter('excel_directory') . $newFilename);  
-                 $row = $spreadsheet->getActiveSheet()->removeRow(1); // I added this to be able to remove the first file line 
-                 $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true); 
-                dump($sheetData);
-                //step4 - save data
-                 $entityManager = $this->getDoctrine()->getManager(); 
+                $row = $spreadsheet->getActiveSheet()->removeRow(1); 
+                $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true); 
+                
+                //step 4.1 - save data
+                $entityManager = $this->getDoctrine()->getManager(); 
                 foreach ($sheetData as $Row) {
+                    if($Row['A'] && $Row['B'] && $Row['C'] ){    
                     $firstname = $Row['A']; 
                     $lastname = $Row['B'];
                     $idnumber= $Row['C']; 
-                    $position_id= $Row['D']; 
-                    $department_id= $Row['E']; 
-
-                    $user_existant = $entityManager->getRepository(User::class)->findOneBy(array('idnumber' => $idnumber)); 
+                    //check if user exists
+                    $user_existant =$userRepository->findOneBy(array('idnumber' => $idnumber)); 
+                    //create new one
                     if (!$user_existant) {
-                    $user = new User(); 
-                    $user->setFirstName($firstname);     
-                    $user->setLastname($lastname);     
-                    $user->setIdnumber($idnumber);     
-                    $user->setPositionId($position_id);     
-                    $user->setDepartmentId($department_id);
-                    $entityManager->persist($user); 
-                    $entityManager->flush();      
-                     }
+                        $user = new User(); 
+                        $user->setFirstName($firstname);     
+                        $user->setLastname($lastname);     
+                        $user->setIdnumber($idnumber);     
+                        $user->setPositionId($positionRepository->findOneBy(array('name' => $Row['D'])));     
+                        $user->setDepartmentId($departmentRepository->findOneBy(array('name' => $Row['E'])));
+                        $entityManager->persist($user); 
+                        $entityManager->flush();      
+                    } else {
+                     //update old
+                        dump($user_existant) ;
+                    }}
                 }
                 
             }
