@@ -56,12 +56,7 @@ class ExcelController extends AbstractController
                         $this->addFlash('info', "missing department for user with an ID: $idnumber !");
                         }
                     if (!$user_existant) {
-                        $user = new User(); 
-                        $user->setFirstName($firstname);     
-                        $user->setLastname($lastname);     
-                        $user->setIdnumber($idnumber);     
-                        $user->setPositionId($position);     
-                        $user->setDepartmentId($department);
+                        $user = new User($firstname,$lastname,$idnumber,$position,$department); 
                         $entityManager->persist($user); 
                         $entityManager->flush();  
                         $this->addFlash('success', "created: $idnumber");    

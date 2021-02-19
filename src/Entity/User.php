@@ -112,4 +112,13 @@ class User
         return $this->getId();
     }
 
+    public function __construct($firstname, $lastname, $idnumber, $position, $department)
+    {    
+    $this->firstname=  $firstname;  
+    $this->lastname=  $lastname;  
+    $this->idnumber=$idnumber;   
+    $this->position=$position;    
+    $this->department =$department;
+    }
+
 }
