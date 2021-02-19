@@ -45,7 +45,6 @@ class ExcelController extends AbstractController
                     $idnumber= $Row['C']; 
                     //check if user exists
                     $user_existant =$userRepository->findOneBy(array('idnumber' => $idnumber)); 
-                    //create new one
                     //for flash messages:
                         $position =$positionRepository->findOneBy(array('name' => $Row['D']));
                         if(!$position){
@@ -56,6 +55,7 @@ class ExcelController extends AbstractController
                         $this->addFlash('info', "missing department for user with an ID: $idnumber !");
                         }
                     if (!$user_existant) {
+                        //create new one
                         $user = new User($firstname,$lastname,$idnumber,$position,$department); 
                         $entityManager->persist($user); 
                         $entityManager->flush();  
